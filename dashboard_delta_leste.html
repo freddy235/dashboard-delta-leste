@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Comercial — Delta Leste</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --marrom: #7D3200;
+    --marrom-escuro: #4A1E00;
+    --marrom-claro: #BF6530;
+    --creme: #FDE8D0;
+    --creme-suave: #FFF5EC;
+    --verde: #1B5E20;
+    --verde-claro: #E8F5E9;
+    --amarelo: #F57F17;
+    --amarelo-claro: #FFF8E1;
+    --vermelho: #B71C1C;
+    --vermelho-claro: #FFEBEE;
+    --cinza: #F5F0EB;
+    --cinza-medio: #D4C5B5;
+    --texto: #2D1A0A;
+    --texto-suave: #7A5C3E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1A0A00;
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* TOPO */
+  .topo {
+    background: linear-gradient(135deg, var(--marrom-escuro) 0%, var(--marrom) 60%, var(--marrom-claro) 100%);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .topo::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .topo-esq h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .topo-esq p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+    margin-top: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+  .topo-dir {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .badge-mes {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+  .btn-atualizar {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-atualizar:hover { background: rgba(255,255,255,0.25); }
+
+  /* AVISO DE CONFIGURACAO */
+  .aviso-config {
+    background: #FFF3CD;
+    border-left: 4px solid #F57F17;
+    padding: 12px 40px;
+    font-size: 13px;
+    color: #5D4037;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .aviso-config a { color: var(--marrom); font-weight: 600; }
+  .aviso-config.hidden { display: none; }
+
+  /* CORPO */
+  .corpo {
+    padding: 32px 40px;
+    background: #FFF5EC;
+    min-height: calc(100vh - 90px);
+  }
+
+  /* FAIXA STATUS */
+  .faixa-status {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .card-kpi {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 22px;
+    border: 1px solid #E8DDD3;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card-kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(125,50,0,0.1); }
+  .card-kpi::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--marrom);
+    border-radius: 0 0 12px 12px;
+  }
+  .card-kpi.critico::after { background: var(--vermelho); }
+  .card-kpi.alerta::after { background: var(--amarelo); }
+  .card-kpi.ok::after { background: var(--verde); }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--texto-suave);
+    margin-bottom: 8px;
+  }
+  .kpi-valor {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--texto);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--texto-suave);
+    font-family: 'DM Mono', monospace;
+  }
+  .kpi-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    margin-top: 6px;
+  }
+  .kpi-badge.ok { background: var(--verde-claro); color: var(--verde); }
+  .kpi-badge.alerta { background: var(--amarelo-claro); color: var(--amarelo); }
+  .kpi-badge.critico { background: var(--vermelho-claro); color: var(--vermelho); }
+
+  /* SECAO */
+  .secao-titulo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--marrom-escuro);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--creme);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .secao-titulo span {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--texto-suave);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  /* GRID EQUIPES */
+  .grid-equipes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .card-equipe {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #E8DDD3;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card-equipe:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(125,50,0,0.1); }
+
+  .equipe-header {
+    padding: 16px 18px 12px;
+    background: var(--marrom-escuro);
+    color: #fff;
+  }
+  .equipe-header h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .equipe-header p {
+    font-size: 11px;
+    opacity: 0.65;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .equipe-corpo { padding: 16px 18px; }
+
+  .barra-progresso {
+    height: 8px;
+    background: var(--cinza);
+    border-radius: 4px;
+    margin: 10px 0 6px;
+    overflow: hidden;
+  }
+  .barra-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--marrom);
+    transition: width 0.8s ease;
+  }
+  .barra-fill.ok { background: var(--verde); }
+  .barra-fill.alerta { background: var(--amarelo); }
+  .barra-fill.critico { background: var(--vermelho); }
+
+  .equipe-nums {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .num-item { text-align: center; }
+  .num-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--texto);
+  }
+  .num-lbl {
+    font-size: 10px;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  .pct-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+  }
+  .pct-valor { font-weight: 700; }
+
+  /* TABELA CORRETORES */
+  .tabela-container {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #E8DDD3;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .tabela-filtros {
+    padding: 16px 20px;
+    border-bottom: 1px solid #E8DDD3;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filtro-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #D4C5B5;
+    background: transparent;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--texto-suave);
+  }
+  .filtro-btn.ativo {
+    background: var(--marrom);
+    color: #fff;
+    border-color: var(--marrom);
+  }
+  .filtro-btn:hover:not(.ativo) { border-color: var(--marrom); color: var(--marrom); }
+
+  .busca-input {
+    margin-left: auto;
+    padding: 6px 14px;
+    border: 1px solid #D4C5B5;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    width: 220px;
+    color: var(--texto);
+  }
+  .busca-input:focus { border-color: var(--marrom); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    background: var(--cinza);
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--texto-suave);
+    text-align: left;
+    white-space: nowrap;
+  }
+  thead th:first-child { border-radius: 0; }
+  tbody tr {
+    border-bottom: 1px solid #F0E8E0;
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: var(--creme-suave); }
+  tbody tr:last-child { border-bottom: none; }
+  td {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--texto);
+  }
+
+  .chip-categoria {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+  }
+  .chip-Prospector { background: #EDE7F6; color: #4527A0; }
+  .chip-Associado { background: #E3F2FD; color: #0D47A1; }
+  .chip-Pleno { background: #E8F5E9; color: #1B5E20; }
+  .chip-Senior { background: #FFF8E1; color: #E65100; }
+  .chip-Master { background: #FDE8D0; color: var(--marrom-escuro); }
+
+  .chip-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+  }
+  .chip-NO_ALVO { background: var(--verde-claro); color: var(--verde); }
+  .chip-ALERTA { background: var(--amarelo-claro); color: var(--amarelo); }
+  .chip-CRITICO { background: var(--vermelho-claro); color: var(--vermelho); }
+  .chip-SEM_DADO { background: var(--cinza); color: var(--texto-suave); }
+
+  .mini-barra {
+    width: 80px;
+    height: 6px;
+    background: var(--cinza);
+    border-radius: 3px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  .mini-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--marrom);
+  }
+  .mini-fill.ok { background: var(--verde); }
+  .mini-fill.alerta { background: var(--amarelo); }
+  .mini-fill.critico { background: var(--vermelho); }
+
+  /* LOADING */
+  .loading {
+    text-align: center;
+    padding: 60px;
+    color: var(--texto-suave);
+  }
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--creme);
+    border-top-color: var(--marrom);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RODAPE */
+  .rodape {
+    padding: 16px 40px;
+    background: var(--marrom-escuro);
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ERRO */
+  .erro-box {
+    background: #fff;
+    border-radius: 12px;
+    border: 2px dashed #D4C5B5;
+    padding: 40px;
+    text-align: center;
+    color: var(--texto-suave);
+  }
+  .erro-box h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--marrom); margin-bottom: 10px; }
+  .erro-box code { background: var(--cinza); padding: 2px 6px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- TOPO -->
+<div class="topo">
+  <div class="topo-esq">
+    <h1>Delta Leste Imóveis</h1>
+    <p id="subtitulo">Dashboard Comercial 2026</p>
+  </div>
+  <div class="topo-dir">
+    <div class="badge-mes" id="badge-mes">—</div>
+    <button class="btn-atualizar" onclick="carregarDados()">↻ Atualizar</button>
+  </div>
+</div>
+
+<!-- AVISO CONFIG -->
+<div class="aviso-config" id="aviso-config">
+  ⚠ Para exibir dados reais, a planilha precisa estar com acesso público (visualização). 
+  <a href="https://docs.google.com/spreadsheets/d/1O67LqNNQk0s2IOfmU8WcLnrAXyT77MV7eEx1LzRf1b0/edit" target="_blank">Abrir planilha</a> 
+  → Compartilhar → "Qualquer pessoa com o link" pode visualizar.
+  Enquanto isso, exibindo dados de demonstração.
+</div>
+
+<!-- CORPO -->
+<div class="corpo">
+
+  <!-- KPIs UNIDADE -->
+  <div class="secao-titulo">Unidade <span>— indicadores consolidados do mês</span></div>
+  <div class="faixa-status" id="kpis-unidade">
+    <div class="loading"><div class="spinner"></div>Carregando...</div>
+  </div>
+
+  <!-- EQUIPES -->
+  <div class="secao-titulo">Equipes <span>— desempenho por gestor</span></div>
+  <div class="grid-equipes" id="grid-equipes">
+    <div class="loading"><div class="spinner"></div>Carregando...</div>
+  </div>
+
+  <!-- CORRETORES -->
+  <div class="secao-titulo">Corretores <span>— ranking individual</span></div>
+  <div class="tabela-container">
+    <div class="tabela-filtros">
+      <button class="filtro-btn ativo" onclick="filtrar(this, 'todos')">Todos</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'NO_ALVO')">No Alvo</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'ALERTA')">Alerta</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'CRITICO')">Crítico</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'e1')">Charles</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'e2')">Oswaldo</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'e3')">Kenia</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'e4')">Rosangela</button>
+      <input class="busca-input" type="text" placeholder="Buscar corretor..." id="busca" oninput="buscarCorretor()">
+    </div>
+    <div id="tabela-corretores">
+      <div class="loading"><div class="spinner"></div>Carregando...</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="rodape">
+  <span>Delta Leste Imóveis · Uberlândia, MG · 2026</span>
+  <span id="ultima-atualizacao">Última atualização: —</span>
+</div>
+
+<script>
+const SHEET_ID = '1O67LqNNQk0s2IOfmU8WcLnrAXyT77MV7eEx1LzRf1b0';
+
+let dadosCorretores = [];
+let filtroAtivo = 'todos';
+
+// ============ DADOS DE DEMONSTRACAO ============
+const dadosDemo = {
+  unidade: {
+    MES: 'Marco', ANO: 2026,
+    META_VGV: 17400000, VGV_REALIZADO: 8700000, VGV_ATING_PCT: 50,
+    VGV_ACUMULADO: 29400000, ACUM_META_ANUAL_PCT: 12,
+    RECEITA: 348000, PMR_MEDIO: 45,
+    TICKET_MEDIO: 580000, CONVERSAO_PCT: 2.8,
+    TOTAL_VENDAS: 15, STATUS_ALERTA: 'ALERTA'
+  },
+  equipes: [
+    { EQUIPE_ID:'e1', GESTOR:'Charles Santos Moura', META_VGV:7000000, VGV_REALIZADO:3800000, VGV_ATING_PCT:54, RECEITA:163400, PMR_MEDIO:42, TICKET_MEDIO:600000, CONVERSAO_PCT:3.1, TAC_PCT:73, VENDAS_CT:6.3, TOTAL_CORRETORES:15, STATUS:'ALERTA' },
+    { EQUIPE_ID:'e2', GESTOR:'Oswaldo', META_VGV:4650000, VGV_REALIZADO:1950000, VGV_ATING_PCT:42, RECEITA:83850, PMR_MEDIO:50, TICKET_MEDIO:520000, CONVERSAO_PCT:2.4, TAC_PCT:44, VENDAS_CT:3.75, TOTAL_CORRETORES:9, STATUS:'CRITICO' },
+    { EQUIPE_ID:'e3', GESTOR:'Kenia Nunes Goncalves', META_VGV:4650000, VGV_REALIZADO:2500000, VGV_ATING_PCT:54, RECEITA:107500, PMR_MEDIO:38, TICKET_MEDIO:625000, CONVERSAO_PCT:3.5, TAC_PCT:62, VENDAS_CT:4, TOTAL_CORRETORES:8, STATUS:'ALERTA' },
+    { EQUIPE_ID:'e4', GESTOR:'Rosangela C. T. Barreto', META_VGV:1100000, VGV_REALIZADO:450000, VGV_ATING_PCT:41, RECEITA:19350, PMR_MEDIO:55, TICKET_MEDIO:450000, CONVERSAO_PCT:1.8, TAC_PCT:37, VENDAS_CT:1, TOTAL_CORRETORES:8, STATUS:'CRITICO' },
+  ],
+  corretores: [
+    { ID_CORRETOR:'C010', NOME:'Fabiana Bastos', EQUIPE:'Charles Santos Moura', EQUIPE_ID:'e1', CATEGORIA:'Master', META_VGV:1500000, VGV_REALIZADO:1200000, VGV_ATING_PCT:80, VENDAS_CT:2, STATUS:'ALERTA' },
+    { ID_CORRETOR:'C025', NOME:'Ellen de Souza Rezende', EQUIPE:'Kenia Nunes Goncalves', EQUIPE_ID:'e3', CATEGORIA:'Master', META_VGV:2000000, VGV_REALIZADO:1800000, VGV_ATING_PCT:90, VENDAS_CT:3, STATUS:'ALERTA' },
+    { ID_CORRETOR:'C005', NOME:'Marrebe Patricia Cury', EQUIPE:'Charles Santos Moura', EQUIPE_ID:'e1', CATEGORIA:'Master', META_VGV:1000000, VGV_REALIZADO:1050000, VGV_ATING_PCT:105, VENDAS_CT:2, STATUS:'NO_ALVO' },
+    { ID_CORRETOR:'C033', NOME:'Jessica de Paula Lima Eleuterio', EQUIPE:'Rosangela C. T. Barreto', EQUIPE_ID:'e4', CATEGORIA:'Senior', META_VGV:1000000, VGV_REALIZADO:450000, VGV_ATING_PCT:45, VENDAS_CT:1, STATUS:'CRITICO' },
+    { ID_CORRETOR:'C002', NOME:'Katia Katherine de Rezende e Resende', EQUIPE:'Charles Santos Moura', EQUIPE_ID:'e1', CATEGORIA:'Senior', META_VGV:600000, VGV_REALIZADO:650000, VGV_ATING_PCT:108, VENDAS_CT:1, STATUS:'NO_ALVO' },
+    { ID_CORRETOR:'C028', NOME:'Luiza Barros Dantas', EQUIPE:'Kenia Nunes Goncalves', EQUIPE_ID:'e3', CATEGORIA:'Master', META_VGV:1000000, VGV_REALIZADO:700000, VGV_ATING_PCT:70, VENDAS_CT:1, STATUS:'ALERTA' },
+    { ID_CORRETOR:'C004', NOME:'Raphael Lorran Alves Castro', EQUIPE:'Charles Santos Moura', EQUIPE_ID:'e1', CATEGORIA:'Senior', META_VGV:700000, VGV_REALIZADO:460000, VGV_ATING_PCT:66, VENDAS_CT:1, STATUS:'ALERTA' },
+    { ID_CORRETOR:'C022', NOME:'Marcelo Inacio Silva', EQUIPE:'Oswaldo', EQUIPE_ID:'e2', CATEGORIA:'Senior', META_VGV:600000, VGV_REALIZADO:600000, VGV_ATING_PCT:100, VENDAS_CT:1, STATUS:'NO_ALVO' },
+    { ID_CORRETOR:'C017', NOME:'Jose Valter Silva Sobreira', EQUIPE:'Oswaldo', EQUIPE_ID:'e2', CATEGORIA:'Senior', META_VGV:500000, VGV_REALIZADO:300000, VGV_ATING_PCT:60, VENDAS_CT:1, STATUS:'ALERTA' },
+    { ID_CORRETOR:'C029', NOME:'Cintia Aparecida Silva', EQUIPE:'Kenia Nunes Goncalves', EQUIPE_ID:'e3', CATEGORIA:'Pleno', META_VGV:400000, VGV_REALIZADO:0, VGV_ATING_PCT:0, VENDAS_CT:0, STATUS:'CRITICO' },
+    { ID_CORRETOR:'C012', NOME:'Maria Abadia dos Reis Silva', EQUIPE:'Charles Santos Moura', EQUIPE_ID:'e1', CATEGORIA:'Pleno', META_VGV:350000, VGV_REALIZADO:0, VGV_ATING_PCT:0, VENDAS_CT:0, STATUS:'CRITICO' },
+    { ID_CORRETOR:'C018', NOME:'Queide Silva', EQUIPE:'Oswaldo', EQUIPE_ID:'e2', CATEGORIA:'Pleno', META_VGV:350000, VGV_REALIZADO:350000, VGV_ATING_PCT:100, VENDAS_CT:1, STATUS:'NO_ALVO' },
+  ]
+};
+
+// ============ PARSE CSV ============
+function parseCSV(text) {
+  const linhas = text.trim().split('\n').filter(l => l.trim());
+  if (linhas.length < 2) return [];
+  const headers = linhas[0].split(',').map(h => h.replace(/"/g,'').trim());
+  return linhas.slice(1).map(linha => {
+    const vals = linha.match(/(".*?"|[^,]+|(?<=,)(?=,)|(?<=,)$|^(?=,))/g) || [];
+    const obj = {};
+    headers.forEach((h, i) => {
+      let v = (vals[i] || '').replace(/"/g,'').trim();
+      obj[h] = isNaN(v) || v === '' ? v : Number(v);
+    });
+    return obj;
+  });
+}
+
+// ============ FETCH SHEET ============
+async function fetchSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('Sem acesso');
+  const text = await resp.text();
+  if (text.includes('Sign in') || text.includes('Redirecting')) throw new Error('Sem acesso público');
+  return parseCSV(text);
+}
+
+// ============ FORMATAR ============
+function fmtVGV(v) {
+  if (!v || v === 0) return 'R$ 0';
+  if (v >= 1000000) return `R$ ${(v/1000000).toFixed(1).replace('.',',')}M`;
+  if (v >= 1000) return `R$ ${(v/1000).toFixed(0)}k`;
+  return `R$ ${v.toLocaleString('pt-BR')}`;
+}
+
+function classeStatus(pct) {
+  if (pct >= 100) return 'ok';
+  if (pct >= 70) return 'alerta';
+  return 'critico';
+}
+
+// ============ RENDER UNIDADE ============
+function renderUnidade(d) {
+  const pct = Math.min(d.VGV_ATING_PCT || 0, 150);
+  const cls = classeStatus(pct);
+  document.getElementById('badge-mes').textContent = `${d.MES || '—'} ${d.ANO || 2026}`;
+  document.getElementById('subtitulo').textContent = `Dashboard Comercial · Meta ${fmtVGV(d.META_VGV)}`;
+  document.getElementById('ultima-atualizacao').textContent = `Última atualização: ${new Date().toLocaleString('pt-BR')}`;
+
+  document.getElementById('kpis-unidade').innerHTML = `
+    <div class="card-kpi ${cls}">
+      <div class="kpi-label">VGV Realizado</div>
+      <div class="kpi-valor">${fmtVGV(d.VGV_REALIZADO)}</div>
+      <div class="kpi-sub">Meta: ${fmtVGV(d.META_VGV)}</div>
+      <span class="kpi-badge ${cls}">${pct}% da meta</span>
+    </div>
+    <div class="card-kpi">
+      <div class="kpi-label">VGV Acumulado 2026</div>
+      <div class="kpi-valor">${fmtVGV(d.VGV_ACUMULADO)}</div>
+      <div class="kpi-sub">Meta anual: R$ 240M</div>
+      <span class="kpi-badge ${classeStatus(d.ACUM_META_ANUAL_PCT||0)}">${d.ACUM_META_ANUAL_PCT||0}% do ano</span>
+    </div>
+    <div class="card-kpi">
+      <div class="kpi-label">Ticket Médio</div>
+      <div class="kpi-valor">${fmtVGV(d.TICKET_MEDIO)}</div>
+      <div class="kpi-sub">Ref: R$ 450k ideal</div>
+    </div>
+    <div class="card-kpi">
+      <div class="kpi-label">PMR Médio</div>
+      <div class="kpi-valor">${d.PMR_MEDIO || 0}<small style="font-size:16px;font-family:'DM Sans'"> dias</small></div>
+      <div class="kpi-sub">Meta: ≤ 60 dias</div>
+      <span class="kpi-badge ${(d.PMR_MEDIO||0) <= 60 ? 'ok' : 'critico'}">${(d.PMR_MEDIO||0) <= 60 ? 'OK' : 'ACIMA'}</span>
+    </div>
+    <div class="card-kpi">
+      <div class="kpi-label">Conversão Leads</div>
+      <div class="kpi-valor">${d.CONVERSAO_PCT || 0}<small style="font-size:16px;font-family:'DM Sans'">%</small></div>
+      <div class="kpi-sub">Meta: ≥ 2%</div>
+      <span class="kpi-badge ${(d.CONVERSAO_PCT||0) >= 2 ? 'ok' : 'critico'}">${(d.CONVERSAO_PCT||0) >= 2 ? 'OK' : 'ABAIXO'}</span>
+    </div>
+  `;
+}
+
+// ============ RENDER EQUIPES ============
+function renderEquipes(equipes) {
+  const gestores = {e1:'Charles',e2:'Oswaldo',e3:'Kenia',e4:'Rosangela',e5:'Equipe E'};
+  document.getElementById('grid-equipes').innerHTML = equipes.map(eq => {
+    const pct = Math.min(eq.VGV_ATING_PCT || 0, 100);
+    const cls = classeStatus(pct);
+    const nome = eq.GESTOR || gestores[eq.EQUIPE_ID] || eq.EQUIPE_ID;
+    return `
+      <div class="card-equipe">
+        <div class="equipe-header">
+          <h3>${nome.split(' ')[0]}</h3>
+          <p>${eq.TOTAL_CORRETORES || 0} corretores · ${eq.VENDAS_CT || 0} vendas</p>
+        </div>
+        <div class="equipe-corpo">
+          <div class="pct-label">
+            <span>VGV ${fmtVGV(eq.VGV_REALIZADO)}</span>
+            <span class="pct-valor" style="color:${cls==='ok'?'#1B5E20':cls==='alerta'?'#F57F17':'#B71C1C'}">${pct}%</span>
+          </div>
+          <div class="barra-progresso">
+            <div class="barra-fill ${cls}" style="width:${pct}%"></div>
+          </div>
+          <div style="font-size:11px;color:var(--texto-suave);font-family:'DM Mono',monospace">Meta: ${fmtVGV(eq.META_VGV)}</div>
+          <div class="equipe-nums">
+            <div class="num-item">
+              <div class="num-val">${eq.TAC_PCT || 0}%</div>
+              <div class="num-lbl">TAC</div>
+            </div>
+            <div class="num-item">
+              <div class="num-val">${eq.PMR_MEDIO || 0}d</div>
+              <div class="num-lbl">PMR</div>
+            </div>
+            <div class="num-item">
+              <div class="num-val">${fmtVGV(eq.TICKET_MEDIO)}</div>
+              <div class="num-lbl">Ticket</div>
+            </div>
+            <div class="num-item">
+              <div class="num-val">${eq.CONVERSAO_PCT || 0}%</div>
+              <div class="num-lbl">Conv.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ RENDER CORRETORES ============
+function renderCorretores(dados) {
+  const filtrados = dados.filter(c => {
+    const buscaVal = document.getElementById('busca').value.toLowerCase();
+    const matchBusca = !buscaVal || c.NOME.toLowerCase().includes(buscaVal);
+    const matchFiltro = filtroAtivo === 'todos' ||
+      c.STATUS === filtroAtivo ||
+      c.EQUIPE_ID === filtroAtivo;
+    return matchBusca && matchFiltro;
+  }).sort((a, b) => (b.VGV_REALIZADO || 0) - (a.VGV_REALIZADO || 0));
+
+  document.getElementById('tabela-corretores').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Corretor</th>
+          <th>Equipe</th>
+          <th>Categoria</th>
+          <th>VGV Realizado</th>
+          <th>Atingimento</th>
+          <th>Vendas</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filtrados.length === 0
+          ? `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--texto-suave)">Nenhum resultado</td></tr>`
+          : filtrados.map((c, i) => {
+            const pct = Math.min(c.VGV_ATING_PCT || 0, 100);
+            const cls = classeStatus(pct);
+            const equipeNome = (c.EQUIPE || '').split(' ')[0];
+            return `<tr>
+              <td style="color:var(--texto-suave);font-family:'DM Mono',monospace;font-size:12px">${i+1}</td>
+              <td>
+                <div style="font-weight:500">${c.NOME}</div>
+                <div style="font-size:11px;color:var(--texto-suave);font-family:'DM Mono',monospace">${c.ID_CORRETOR}</div>
+              </td>
+              <td style="color:var(--texto-suave)">${equipeNome}</td>
+              <td><span class="chip-categoria chip-${c.CATEGORIA}">${c.CATEGORIA}</span></td>
+              <td style="font-family:'DM Mono',monospace;font-weight:600">${fmtVGV(c.VGV_REALIZADO)}</td>
+              <td>
+                <div class="mini-barra"><div class="mini-fill ${cls}" style="width:${pct}%"></div></div>
+                <span style="font-family:'DM Mono',monospace;font-size:12px">${pct}%</span>
+              </td>
+              <td style="font-family:'DM Mono',monospace;text-align:center">${c.VENDAS_CT || 0}</td>
+              <td><span class="chip-status chip-${c.STATUS||'SEM_DADO'}">${c.STATUS||'—'}</span></td>
+            </tr>`;
+          }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ============ FILTROS ============
+function filtrar(btn, val) {
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  filtroAtivo = val;
+  renderCorretores(dadosCorretores);
+}
+
+function buscarCorretor() {
+  renderCorretores(dadosCorretores);
+}
+
+// ============ CARREGAR DADOS ============
+async function carregarDados() {
+  try {
+    const [unidade, equipes, corretores] = await Promise.all([
+      fetchSheet('RESUMO_UNIDADE'),
+      fetchSheet('RESUMO_EQUIPE'),
+      fetchSheet('RESUMO_CORRETOR'),
+    ]);
+
+    const dadosUnidade = unidade.find(r => r.MES && r.MES !== 'MES') || unidade[0];
+    const dadosEquipes = equipes.filter(r => r.EQUIPE_ID && r.EQUIPE_ID !== 'EQUIPE_ID' && r.EQUIPE_ID !== 'Esta');
+    dadosCorretores = corretores.filter(r => r.ID_CORRETOR && r.ID_CORRETOR !== 'ID_CORRETOR' && r.ID_CORRETOR !== 'Esta');
+
+    if (dadosUnidade) renderUnidade(dadosUnidade);
+    if (dadosEquipes.length) renderEquipes(dadosEquipes);
+    renderCorretores(dadosCorretores);
+
+    document.getElementById('aviso-config').classList.add('hidden');
+
+  } catch(e) {
+    // Fallback para dados de demo
+    renderUnidade(dadosDemo.unidade);
+    renderEquipes(dadosDemo.equipes);
+    dadosCorretores = dadosDemo.corretores;
+    renderCorretores(dadosCorretores);
+
+    document.getElementById('badge-mes').textContent = `${dadosDemo.unidade.MES} ${dadosDemo.unidade.ANO} (demo)`;
+    document.getElementById('ultima-atualizacao').textContent = `Dados de demonstração · ${new Date().toLocaleString('pt-BR')}`;
+  }
+}
+
+// Iniciar
+carregarDados();
+</script>
+</body>
+</html>
