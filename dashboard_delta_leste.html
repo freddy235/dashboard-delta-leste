@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Comercial â Delta Leste</title>
+<title>Dashboard Comercial Ã¢ÂÂ Delta Leste</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -450,46 +450,46 @@
 <!-- TOPO -->
 <div class="topo">
   <div class="topo-esq">
-    <h1>Delta Leste ImÃ³veis</h1>
+    <h1>Delta Leste ImÃÂ³veis</h1>
     <p id="subtitulo">Dashboard Comercial 2026</p>
   </div>
   <div class="topo-dir">
-    <div class="badge-mes" id="badge-mes">â</div>
-    <button class="btn-atualizar" onclick="carregarDados()">â» Atualizar</button>
+    <div class="badge-mes" id="badge-mes">Ã¢ÂÂ</div>
+    <button class="btn-atualizar" onclick="carregarDados()">Ã¢ÂÂ» Atualizar</button>
   </div>
 </div>
 
 <!-- AVISO CONFIG -->
 <div class="aviso-config" id="aviso-config">
-  â  Para exibir dados reais, a planilha precisa estar com acesso pÃºblico (visualizaÃ§Ã£o). 
+  Ã¢ÂÂ  Para exibir dados reais, a planilha precisa estar com acesso pÃÂºblico (visualizaÃÂ§ÃÂ£o). 
   <a href="https://docs.google.com/spreadsheets/d/1O67LqNNQk0s2IOfmU8WcLnrAXyT77MV7eEx1LzRf1b0/edit" target="_blank">Abrir planilha</a> 
-  â Compartilhar â "Qualquer pessoa com o link" pode visualizar.
-  Enquanto isso, exibindo dados de demonstraÃ§Ã£o.
+  Ã¢ÂÂ Compartilhar Ã¢ÂÂ "Qualquer pessoa com o link" pode visualizar.
+  Enquanto isso, exibindo dados de demonstraÃÂ§ÃÂ£o.
 </div>
 
 <!-- CORPO -->
 <div class="corpo">
 
   <!-- KPIs UNIDADE -->
-  <div class="secao-titulo">Unidade <span>â indicadores consolidados do mÃªs</span></div>
+  <div class="secao-titulo">Unidade <span>Ã¢ÂÂ indicadores consolidados do mÃÂªs</span></div>
   <div class="faixa-status" id="kpis-unidade">
     <div class="loading"><div class="spinner"></div>Carregando...</div>
   </div>
 
   <!-- EQUIPES -->
-  <div class="secao-titulo">Equipes <span>â desempenho por gestor</span></div>
+  <div class="secao-titulo">Equipes <span>Ã¢ÂÂ desempenho por gestor</span></div>
   <div class="grid-equipes" id="grid-equipes">
     <div class="loading"><div class="spinner"></div>Carregando...</div>
   </div>
 
   <!-- CORRETORES -->
-  <div class="secao-titulo">Corretores <span>â ranking individual</span></div>
+  <div class="secao-titulo">Corretores <span>Ã¢ÂÂ ranking individual</span></div>
   <div class="tabela-container">
     <div class="tabela-filtros">
       <button class="filtro-btn ativo" onclick="filtrar(this, 'todos')">Todos</button>
       <button class="filtro-btn" onclick="filtrar(this, 'NO_ALVO')">No Alvo</button>
       <button class="filtro-btn" onclick="filtrar(this, 'ALERTA')">Alerta</button>
-      <button class="filtro-btn" onclick="filtrar(this, 'CRITICO')">CrÃ­tico</button>
+      <button class="filtro-btn" onclick="filtrar(this, 'CRITICO')">CrÃÂ­tico</button>
       <button class="filtro-btn" onclick="filtrar(this, 'e1')">Charles</button>
       <button class="filtro-btn" onclick="filtrar(this, 'e2')">Oswaldo</button>
       <button class="filtro-btn" onclick="filtrar(this, 'e3')">Kenia</button>
@@ -504,8 +504,8 @@
 </div>
 
 <div class="rodape">
-  <span>Delta Leste ImÃ³veis Â· UberlÃ¢ndia, MG Â· 2026</span>
-  <span id="ultima-atualizacao">Ãltima atualizaÃ§Ã£o: â</span>
+  <span>Delta Leste ImÃÂ³veis ÃÂ· UberlÃÂ¢ndia, MG ÃÂ· 2026</span>
+  <span id="ultima-atualizacao">ÃÂltima atualizaÃÂ§ÃÂ£o: Ã¢ÂÂ</span>
 </div>
 
 <script>
@@ -568,7 +568,7 @@ async function fetchSheet(sheetName) {
   const resp = await fetch(url);
   if (!resp.ok) throw new Error('Sem acesso');
   const text = await resp.text();
-  if (text.includes('Sign in') || text.includes('Redirecting')) throw new Error('Sem acesso pÃºblico');
+  if (text.includes('Sign in') || text.includes('Redirecting')) throw new Error('Sem acesso pÃÂºblico');
   return parseCSV(text);
 }
 
@@ -590,9 +590,9 @@ function classeStatus(pct) {
 function renderUnidade(d) {
   const pct = Math.min(d.VGV_ATING_PCT || 0, 150);
   const cls = classeStatus(pct);
-  document.getElementById('badge-mes').textContent = `${d.MES || 'â'} ${d.ANO || 2026}`;
-  document.getElementById('subtitulo').textContent = `Dashboard Comercial Â· Meta ${fmtVGV(d.META_VGV)}`;
-  document.getElementById('ultima-atualizacao').textContent = `Ãltima atualizaÃ§Ã£o: ${new Date().toLocaleString('pt-BR')}`;
+  document.getElementById('badge-mes').textContent = `${d.MES || 'Ã¢ÂÂ'} ${d.ANO || 2026}`;
+  document.getElementById('subtitulo').textContent = `Dashboard Comercial ÃÂ· Meta ${fmtVGV(d.META_VGV)}`;
+  document.getElementById('ultima-atualizacao').textContent = `ÃÂltima atualizaÃÂ§ÃÂ£o: ${new Date().toLocaleString('pt-BR')}`;
 
   document.getElementById('kpis-unidade').innerHTML = `
     <div class="card-kpi ${cls}">
@@ -608,20 +608,20 @@ function renderUnidade(d) {
       <span class="kpi-badge ${classeStatus(d.ACUM_META_ANUAL_PCT||0)}">${d.ACUM_META_ANUAL_PCT||0}% do ano</span>
     </div>
     <div class="card-kpi">
-      <div class="kpi-label">Ticket MÃ©dio</div>
+      <div class="kpi-label">Ticket MÃÂ©dio</div>
       <div class="kpi-valor">${fmtVGV(d.TICKET_MEDIO)}</div>
       <div class="kpi-sub">Ref: R$ 450k ideal</div>
     </div>
     <div class="card-kpi">
-      <div class="kpi-label">PMR MÃ©dio</div>
+      <div class="kpi-label">PMR MÃÂ©dio</div>
       <div class="kpi-valor">${d.PMR_MEDIO || 0}<small style="font-size:16px;font-family:'DM Sans'"> dias</small></div>
-      <div class="kpi-sub">Meta: â¤ 60 dias</div>
+      <div class="kpi-sub">Meta: Ã¢ÂÂ¤ 60 dias</div>
       <span class="kpi-badge ${(d.PMR_MEDIO||0) <= 60 ? 'ok' : 'critico'}">${(d.PMR_MEDIO||0) <= 60 ? 'OK' : 'ACIMA'}</span>
     </div>
     <div class="card-kpi">
-      <div class="kpi-label">ConversÃ£o Leads</div>
+      <div class="kpi-label">ConversÃÂ£o Leads</div>
       <div class="kpi-valor">${d.CONVERSAO_PCT || 0}<small style="font-size:16px;font-family:'DM Sans'">%</small></div>
-      <div class="kpi-sub">Meta: â¥ 2%</div>
+      <div class="kpi-sub">Meta: Ã¢ÂÂ¥ 2%</div>
       <span class="kpi-badge ${(d.CONVERSAO_PCT||0) >= 2 ? 'ok' : 'critico'}">${(d.CONVERSAO_PCT||0) >= 2 ? 'OK' : 'ABAIXO'}</span>
     </div>
   `;
@@ -638,7 +638,7 @@ function renderEquipes(equipes) {
       <div class="card-equipe">
         <div class="equipe-header">
           <h3>${eq.EQUIPE_ID === 'e5' ? 'Equipe E' : nome.split(' ')[0]}</h3>
-          <p>${eq.TOTAL_CORRETORES || 0} corretores Â· ${eq.VENDAS_CT || 0} vendas</p>
+          <p>${eq.TOTAL_CORRETORES || 0} corretores ÃÂ· ${eq.VENDAS_CT || 0} vendas</p>
         </div>
         <div class="equipe-corpo">
           <div class="pct-label">
@@ -721,7 +721,7 @@ function renderCorretores(dados) {
                 <span style="font-family:'DM Mono',monospace;font-size:12px">${pct}%</span>
               </td>
               <td style="font-family:'DM Mono',monospace;text-align:center">${c.VENDAS_CT || 0}</td>
-              <td><span class="chip-status chip-${c.STATUS||'SEM_DADO'}">${c.STATUS||'â'}</span></td>
+              <td><span class="chip-status chip-${c.STATUS||'SEM_DADO'}">${c.STATUS||'Ã¢ÂÂ'}</span></td>
             </tr>`;
           }).join('')}
       </tbody>
@@ -768,7 +768,7 @@ async function carregarDados() {
     renderCorretores(dadosCorretores);
 
     document.getElementById('badge-mes').textContent = `${dadosDemo.unidade.MES} ${dadosDemo.unidade.ANO} (demo)`;
-    document.getElementById('ultima-atualizacao').textContent = `Dados de demonstraÃ§Ã£o Â· ${new Date().toLocaleString('pt-BR')}`;
+    document.getElementById('ultima-atualizacao').textContent = `Dados de demonstraÃÂ§ÃÂ£o ÃÂ· ${new Date().toLocaleString('pt-BR')}`;
   }
 }
 
